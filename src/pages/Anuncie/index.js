@@ -1,45 +1,82 @@
-import Header from "components/Header";
-import { useSelector } from "react-redux";
-import styles from "./Anuncie.module.scss";
 import Button from "components/Button";
+import Header from "components/Header";
+import { useDispatch, useSelector } from "react-redux";
+import styles from "./Anuncie.module.scss";
 import { useForm } from "react-hook-form";
+import { cadastrarItem } from "store/reducers/itens";
 
 export default function Anuncie() {
+  const dispatch = useDispatch();
   const categorias = useSelector((state) =>
     state.categorias.map(({ nome, id }) => ({ nome, id }))
   );
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, formState } = useForm({
+    defaultValues: {
+      categoria: "",
+    },
+  });
+  const { errors } = formState;
 
-  function Cadastrar(parametro) {
-    console.log("parametro: ", parametro);
+  function cadastrar(data) {
+    dispatch(cadastrarItem(data));
   }
+
+  console.log(errors); // Para ver o objeto errors mudando!
 
   return (
     <div className={styles.container}>
       <Header
-        titulo="Anuncie aqui"
-        descricao="Anuncie seu produto no melhor site do Brasil"
+        titulo="Anuncie aqui!"
+        descricao="Anuncie seu produto no melhor site do Brasil!"
       />
-
-      <from className={styles.formulario} onSubmit={handleSubmit(Cadastrar)}>
+      <form className={styles.formulario} onSubmit={handleSubmit(cadastrar)}>
         <input
-          {...register("nome")}
-          placeholder="Nome do pruduto"
-          alt="Nome do produto"
+          className={errors.nome ? styles["input-erro"] : ""}
+          {...register("nome", { required: "O campo nome é obrigatório" })}
+          placeholder="Nome do produto"
+          alt="nome do produto"
         />
+        {errors.nome && (
+          <span className={styles["mensagem-erro"]}>
+            {" "}
+            {errors.nome.message}{" "}
+          </span>
+        )}
         <input
-          {...register("descricao")}
+          className={errors.descricao ? styles["input-erro"] : ""}
+          {...register("descricao", {
+            required: "O campo descricao é obrigatório",
+          })}
           placeholder="Descrição do produto"
-          alt="Descriação do produto"
+          alt="descrição do produto"
         />
+        {errors.descricao && (
+          <span className={styles["mensagem-erro"]}>
+            {" "}
+            {errors.descricao.message}{" "}
+          </span>
+        )}
         <input
-          {...register("imagem")}
+          className={errors.imagem ? styles["input-erro"] : ""}
+          {...register("imagem", { required: "O campo imagem é obrigatório" })}
           placeholder="URL da imagem do produto"
           alt="URL da imagem do produto"
         />
-        <select {...register("categoria")}>
+        {errors.imagem && (
+          <span className={styles["mensagem-erro"]}>
+            {" "}
+            {errors.imagem.message}{" "}
+          </span>
+        )}
+        <select
+          className={errors.categoria ? styles["input-erro"] : ""}
+          {...register("categoria", {
+            required: "O campo categoria é obrigatório",
+          })}
+        >
           <option value="" disabled>
-            Selecione a categoria
+            {" "}
+            Selecione a categoria{" "}
           </option>
           {categorias.map((categoria) => (
             <option key={categoria.id} value={categoria.id}>
@@ -47,13 +84,26 @@ export default function Anuncie() {
             </option>
           ))}
         </select>
+        {errors.categoria && (
+          <span className={styles["mensagem-erro"]}>
+            {" "}
+            {errors.categoria.message}{" "}
+          </span>
+        )}
         <input
-          {...register("preco")}
+          className={errors.preco ? styles["input-erro"] : ""}
+          {...register("preco", { required: "O campo preco é obrigatório" })}
           type="number"
           placeholder="Preço do produto"
         />
+        {errors.preco && (
+          <span className={styles["mensagem-erro"]}>
+            {" "}
+            {errors.preco.message}{" "}
+          </span>
+        )}
         <Button type="submit">Cadastrar produto</Button>
-      </from>
+      </form>
     </div>
   );
 }

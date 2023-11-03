@@ -9,7 +9,7 @@ import Busca from '../Busca';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const iconeProps = {
-  color: 'white',
+  color: 'black',
   size: 24
 }
 
